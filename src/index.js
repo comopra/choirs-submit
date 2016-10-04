@@ -1,12 +1,10 @@
-var http = require('http')
+const http = require( "http" )
+const { port, ip } = require( "./config" );
+const helloWorld = ( req, res ) => {
 
-var port = 4000
-
-var server = http.createServer(function (request, response) {
-  response.writeHead(200, {'Content-Type': 'text/plain'})
-  response.end('Hello World\n')
-})
-
-server.listen(port)
-
-console.log('Server running at http://localhost:' + port)
+  res.writeHead( 200, { "Content-Type": "text/plain" } );
+  res.end( "Hello World\n" );
+  
+};
+const server = http.createServer( helloWorld ).listen( port, ip );
+console.log( `Server running at http://${ip}:${port}` );
