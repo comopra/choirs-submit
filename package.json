@@ -1,11 +1,12 @@
 {
   "name": "comopra-choirs-submit",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Submit a new choir to the choirs of the world map",
-  "main": "app.js",
   "scripts": {
-    "start": "node app",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test",
+    "zip": "zip -FSr dist/index.zip . -x \"dist/*\" \".*\"",
+    "publish": "aws lambda update-function-code --function-name ChoirsSubmit --zip-file fileb://dist/index.zip",
+    "zipublish": "npm run zip; npm run publish"
   },
   "repository": {
     "type": "git",
@@ -16,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/comopra/choirs-submit/issues"
   },
-  "homepage": "https://github.com/comopra/choirs-submit#readme"
+  "homepage": "https://github.com/comopra/choirs-submit#readme",
+  "dependencies": {
+    "handlebars": "^4.0.5"
+  }
 }
