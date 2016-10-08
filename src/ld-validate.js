@@ -1,5 +1,5 @@
 
-function expandRangeValue( range, context ) {
+function expandRangeValue( range, ldContext ) {
     
     if ( !/\/\//.test( range ) ) {
         
@@ -7,12 +7,12 @@ function expandRangeValue( range, context ) {
         var qualified = pattern.exec( range );
         if ( qualified ) {
 
-            var alias = context[ qualified[ 2 ] ];
+            var alias = ldContext[ qualified[ 2 ] ];
             if ( alias ) { range = range.replace( pattern, alias + "$3" ); }
 
         } else {
             
-            var vocab = context[ "@vocab" ];
+            var vocab = ldContext[ "@vocab" ];
             if ( vocab ) { range = vocab + range; }
             
         }
@@ -48,9 +48,9 @@ function validateSimpleValueType( key, value, spec ) {
     
 }
 
-function validateSimpleValueRange( key, value, spec ) {
+function validateSimpleValueRange( key, value, spec, ldContext ) {
 
-    var range = spec.range ? expandRangeValue( spec.range, context ) : null;
+    var range = spec.range ? expandRangeValue( spec.range, ldContext ) : null;
     if ( range ) {
         
         var isArrayMatch = Array.isArray( value ) && ~value.indexOf( range );
@@ -64,14 +64,14 @@ function validateSimpleValueRange( key, value, spec ) {
     
 }
         
-function validateSimpleValue( doc, key, spec, context ) {
+function validateSimpleValue( doc, key, spec, ldContext ) {
 
     var value = resolveAndCheckForRequired( doc, key, spec );
     if ( value ) {
 
         if ( typeof value === "object" ) { value = value.json(); } // e.g. @type might return a querynode
         validateSimpleValueType( key, value, spec );
-        validateSimpleValueRange( key, value, spec );
+        validateSimpleValueRange( key, value, spec, ldContext );
 
     }
     console.log( key, "is valid:", value );
@@ -90,7 +90,7 @@ function resolveSchema( schemas, schemaName ) {
     
 }
 
-function validateObjectValue( doc, key, spec, context, validateData ) {
+function validateObjectValue( doc, key, spec, ldContext, validateData ) {
     
     var resolved = resolveAndCheckForRequired( doc, key, spec );
     if ( resolved ) {
@@ -103,7 +103,7 @@ function validateObjectValue( doc, key, spec, context, validateData ) {
 
 }
 
-function validateDocumentAgainstSchema( context, schema, doc, validateData ) {
+function validateDocumentAgainstSchema( ldContext, schema, doc, validateData ) {
     
     for( var key in schema ) {
 
@@ -112,11 +112,11 @@ function validateDocumentAgainstSchema( context, schema, doc, validateData ) {
             
             case "object":
                 
-                validateObjectValue( doc, key, spec, context, validateData );
+                validateObjectValue( doc, key, spec, ldContext, validateData );
                 break;
                 
             default:
-                validateSimpleValue( doc, key, spec, context );
+                validateSimpleValue( doc, key, spec, ldContext );
                 
         }
 
@@ -124,13 +124,13 @@ function validateDocumentAgainstSchema( context, schema, doc, validateData ) {
     
 }
 
-module.exports = function validationFactory( query, schemas, context ) {
+module.exports = function validationFactory( query, schemas, ldContext ) {
     
     function validateData( schemaName, data ) {
     
         var schema = resolveSchema( schemas, schemaName );
         var doc = query( data );
-        validateDocumentAgainstSchema( context, schema, doc, validateData );
+        validateDocumentAgainstSchema( ldContext, schema, doc, validateData );
         
     }
 
