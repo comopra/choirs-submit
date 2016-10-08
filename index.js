@@ -1,9 +1,14 @@
-const execute = require( "./src/script" );
-const storageOperation = require( "./src/operations/storage" );
+    
+    // script to execute
+    const script = require( "./src/script" );
+    
+    // a storage operation
+    const storageOperation = require( "./src/operations/storage" );
+    
+    // the handler
+    const handler = ( event, context, callback ) => storageOperation
+        .init( event, context, callback )
+        .execute( script );
 
-module.exports.handler = ( event, context, callback ) => {
-    
-    const op = storageOperation.for( event, context, callback );
-    execute( op );
-    
-};
+    // export it
+    module.exports = { handler };
