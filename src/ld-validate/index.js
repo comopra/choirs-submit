@@ -1,3 +1,4 @@
+var ldQuery = require( "ld-query" );
 
 function expandRangeValue( range, ldContext ) {
     
@@ -124,7 +125,9 @@ function validateDocumentAgainstSchema( ldContext, schema, doc, validateData ) {
     
 }
 
-module.exports = function validationFactory( query, schemas, ldContext ) {
+module.exports = function validationFactory( schemas, ldContext ) {
+    
+    var query = ldQuery( ldContext );
     
     function validateData( schemaName, data ) {
     

@@ -1,6 +1,7 @@
 module.exports = op => op
-    .shouldOnlyAccept( "POST" )
-    .shouldOnlyAcceptContentTypes( "application/ld+json" )
+    .shouldOnlyAccept( [ "POST" ] )
+    .shouldOnlySupportContentTypes( [ "application/ld+json" ] )
+    .shouldParseBodyAsJSONLD()
     .shouldHaveSchema( "choir" )
     .shouldBeStoredInS3()
     .shouldIndicateResult()
