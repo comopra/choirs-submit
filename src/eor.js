@@ -8,7 +8,7 @@ module.exports = function eor( fail, succeed ) {
         
         } else {
         
-            succeed.apply( null, arguments.slice( 1 ) );
+            succeed.apply( null, [].slice.call( arguments, 1 ) );
             
         }   
         

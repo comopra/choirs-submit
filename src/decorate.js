@@ -12,7 +12,7 @@ module.exports = function decorate( target, functionDecorator ) {
                 target,
                 prop,
                 arguments,
-                () => console.log( target, prop ) || target[ prop ].apply( target, arguments )
+                () => target[ prop ].apply( target, arguments )
     
             );
 

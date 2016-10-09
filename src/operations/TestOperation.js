@@ -1,5 +1,6 @@
 const BaseOperation = require( "./BaseOperation" );
 const eor = require( "../eor" );
+const should = require( "should" );
 
 function TestOperation( systemUnderTest ) {
     
@@ -10,40 +11,38 @@ TestOperation.prototype = Object.assign( new BaseOperation(), {
 
     constructor: TestOperation,
     
-    shouldOnlyAccept: function( allowedContentType ) {
+    shouldOnlyAccept: function() {
         
-        console.log( 1234, this )
-        return [
-            "hello",
-            ( resolve, reject ) => 
-                this.handler( {}, {}, eor( reject, result => {
+        const allowedMethods = [].slice.call( arguments, 0, 999 );
+        const manyMethods = [ "GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "YOMOMMA" ];
+        const resultAnalyser = ( evt, resolve, reject ) => eor( reject, result => {
+            
+            const message = [
                 
-                    console.log( "Test 1 passed" );
-                    resolve();
-                
-                } ) )
-        
-        ];
-        
+                "Should only accept HTTP methods: " + allowedMethods.join( ", " ),
+                "The test sent a " + evt.httpMethod,
+                "Expected status 405 but got " + result.status
+            
+            ].join( ". " );
+            result.status.should.eql( 405, message );
+            resolve();
+            
+        } );
+        const methodAsEvent = httpMethod => ( { httpMethod } );
+        const disallowed = x => !~allowedMethods.indexOf( x )
+        // given an vent object, return a promise resovler which invokes the handler
+        const runTest = evt => ( resolve, reject ) => this.handler( evt, null, resultAnalyser( evt, resolve, reject ) );
+        return manyMethods.filter( disallowed ).map( methodAsEvent ).map( runTest );
+
     },
 
-    shouldHaveSchema: () => { 
-        
-        throw new Error( "Not implemented" );
-        
-    },
+    shouldOnlyAcceptContentTypes: () => new Error( "Not implemented" ),
     
-    shouldBeStoredInS3: () => { 
-        
-        throw new Error( "Not implemented" );
-        
-    },
+    shouldHaveSchema: () => new Error( "Not implemented" ),
     
-    shouldIndicateResult: () => {
-        
-        throw new Error( "Not implemented" ); 
-        
-    }
+    shouldBeStoredInS3: () => new Error( "Not implemented" ),
+    
+    shouldIndicateResult: () => new Error( "Not implemented" )
     
 } );
 module.exports = TestOperation;
