@@ -75,7 +75,6 @@ StorageOperation.prototype = Object.assign( new LambdaOperation(), {
     
     shouldHaveSchema: function( schemaName ) {
 
-console.log( "Should have the schema: " + schemaName );  
         const diagnose = e => console.log( e.stack ) || console.log( "Body:", this.evt.body );
         return new Promise( ( resolve, reject ) => {
             
@@ -85,7 +84,8 @@ console.log( "Should have the schema: " + schemaName );
                 if ( e ) { 
                     
                     diagnose( e );
-                    return this.callbackAndReject( 422, "Unprocessable entity", reject );
+                    const message = [ "Unprocessable entity", e.message ].join( "\n\n" );
+                    return this.callbackAndReject( 422, message, reject );
                     
                 } else {
                     

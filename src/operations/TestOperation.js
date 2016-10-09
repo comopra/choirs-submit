@@ -13,9 +13,33 @@ Array.prototype.except = function( xs ) { return this.filter( y => !~xs.indexOf(
 Array.prototype.paragraph = function() { return this.join( ". " ) + "."; };
 Array.prototype.flatten = function() { return [].concat.apply( [], this ); };
 
+function verifyStatusCode( expectedStatusCode, description, resolve, reject ) {
+    
+    return eor( reject, result => {
+        
+        should.exist( result.statusCode, "Status code should exist" );
+        const message = [ "Expected status " + expectedStatusCode + " but got " + result.statusCode ]
+            .concat( description ).paragraph();
+        result.statusCode.should.eql( expectedStatusCode, message );
+        resolve();
+        
+    } );
+    
+}
 TestOperation.prototype = Object.assign( new BaseOperation(), {
 
     constructor: TestOperation,
+    
+     runLambdaFunction: function( evt, context, callbackFactory ) {
+        
+        return new Promise( ( resolve, reject ) => {
+        
+            const callback = callbackFactory( resolve, reject );
+            this.handler( evt, context, callback );
+            
+        } );
+        
+    },
     
     shouldOnlyAccept: function( allowedMethods ) {
         
@@ -48,43 +72,32 @@ TestOperation.prototype = Object.assign( new BaseOperation(), {
         return disallowedMethods.map( methodAsEventObject ).map( invokeAsPromiseResolver );
 
     },
-
+    
     shouldOnlySupportContentTypes: function( supportedContentTypes ) {
-
-        const unsupportedContentTypes = [ "application/ld+json", "application/json", "text/xml", "application/x-www-form-urlencoded" ]
-            .except( supportedContentTypes );
+        
+        const testEvents = [ "application/ld+json", "application/json", "text/xml", "application/x-www-form-urlencoded" ]
+            .except( supportedContentTypes )
+            .map( unsupportedContentType => ( { 
             
-        const resultAnalyser = ( evt, resolve, reject ) => eor( reject, result => {
-            
-            should.exist( result.statusCode, 
+                httpMethod: "POST", 
+                headers: { "Content-Type": unsupportedContentType }
                 
-                "Status code should exist"
+            } ) );
             
-            );
-            result.statusCode.should.eql( 415, [
+        return testEvents.map( evt =>
         
-                "Should only accept Content Types: " + supportedContentTypes.join( ", " ),
-                "The test sent " + evt.headers[ "Content-Type" ],
-                "Expected status 415 but got " + result.statusCode
+            this.runLambdaFunction( evt, null, ( resolve, reject ) => 
             
-            ].paragraph() );
-            resolve();
+                verifyStatusCode( 415, [
             
-        } );
+                    "Should only accept Content Types: " + supportedContentTypes.join( ", " ),
+                    "The test sent " + evt.headers[ "Content-Type" ]
         
-        const unsupportedContentTypeAsEventObject = unsupportedContentType => ( { 
-            
-            httpMethod: "POST", 
-            headers: { "Content-Type": unsupportedContentType }
-            
-        } );
-
-        const invokeHandler = ( evt, analyser ) => this.handler( evt, null, analyser );
-        const invokeAsPromiseResolver = evt => ( resolve, reject ) => invokeHandler( evt, resultAnalyser( evt, resolve, reject ) );
+                ], resolve, reject )
+                
+            )
         
-        return unsupportedContentTypes
-            .map( unsupportedContentTypeAsEventObject )
-            .map( invokeAsPromiseResolver );
+        );
             
     },
     
@@ -132,8 +145,6 @@ TestOperation.prototype = Object.assign( new BaseOperation(), {
         return glob( __dirname + "/../../schema/examples/invalid/" + schemaName + "-*.json" ).then( filePaths => {
             
             const badlyStructuredData = filePaths.map( filePath => require( filePath ) );
-
-console.log( badlyStructuredData );
 
             const asStatusCodeMessage = ( evt, result ) => [
             

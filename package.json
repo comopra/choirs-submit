@@ -6,7 +6,7 @@
     "test": "node test",
     "zip": "npm prune --production; zip -FSr dist/index.zip . -x \"dist/*\" \".*\"",
     "publish": "aws lambda update-function-code --function-name ChoirsSubmit --zip-file fileb://dist/index.zip",
-    "zipublish": "npm run zip; npm run publish"
+    "zipublish": "npm run zip; npm run publish; npm install;"
   },
   "repository": {
     "type": "git",
