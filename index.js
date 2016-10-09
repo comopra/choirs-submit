@@ -7,8 +7,9 @@
     
     // the handler
     const handler = ( event, context, callback ) => storageOperation
-        .init( event, context, callback )
-        .execute( script );
+        .init( event, context )
+        .execute( script )
+        .then( x => callback( null, x ), callback );
 
     // export it
     module.exports = { handler };

@@ -11,6 +11,7 @@ const init = () => ( {
     chain: function( func ) { 
         
         this.promise = this.promise.then( x => new Promise( func ) );
+        return this;
         
     }
     
