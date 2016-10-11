@@ -1,4 +1,5 @@
 var ldQuery = require( "ld-query" );
+var debug = require( "debug" )( "ld-validate" );
 
 function expandRangeValue( range, ldContext ) {
     
@@ -75,7 +76,7 @@ function validateSimpleValue( doc, key, spec, ldContext ) {
         validateSimpleValueRange( key, value, spec, ldContext );
 
     }
-    console.log( key, "is valid:", value );
+    debug( key, "is valid:", value );
     
 }
 
@@ -96,11 +97,11 @@ function validateObjectValue( doc, key, spec, ldContext, validateData ) {
     var resolved = resolveAndCheckForRequired( doc, key, spec );
     if ( resolved ) {
 
-        console.log( "___", key, "___" );
+       debug( "___", key, "___" );
         validateData( spec.schema, resolved.json() ); 
         
     }
-    console.log( "___", key, "___" );
+    debug( "___", key, "___" );
 
 }
 

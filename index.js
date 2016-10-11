@@ -8,7 +8,8 @@
     const throwNext = e => process.nextTick( () => { throw e; } );
     const diagnoseRejects = maybeError => 
         ( maybeError instanceof Error ) ? 
-            throwNext( maybeError ) : console.log( maybeError );
+            console.log( maybeError.stack ) : 
+            console.log( maybeError );
             
     // the handler
     const handler = ( event, context, callback ) => 

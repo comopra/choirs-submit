@@ -9,8 +9,6 @@ function StorageOperation( evt, context, callback ) {
     
 }
 
-const notImplemented = () => { throw new Error( "Not implemented" ); }
-
 StorageOperation.prototype = Object.assign( new LambdaOperation(), {
     
     constructor: StorageOperation,
@@ -31,7 +29,7 @@ StorageOperation.prototype = Object.assign( new LambdaOperation(), {
         const actualContentType = this.evt.headers[ "Content-Type" ];
         if ( !~allowedContentTypes.indexOf( actualContentType ) ) {
             
-            return this.callbackAndReject( 415, "Unsupported content type: " + actualContentType );
+            return this.callbackAndReject( 416, "Unsupported content type: " + actualContentType );
 
         }
         
@@ -97,13 +95,11 @@ StorageOperation.prototype = Object.assign( new LambdaOperation(), {
 
         } );
         
-        
-        throw new Error( "Not implemented" );
-        
     },
     
-    shouldBeStoredInS3: () => notImplemented(),
-    shouldIndicateResult: () => notImplemented()
+    shouldBeStoredInS3: () => Promise.reject( "Not implemented" ),
+    
+    shouldIndicateResult: () => Promise.reject( "Not implemented" )
     
 } );
 

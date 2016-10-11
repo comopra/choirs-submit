@@ -19,8 +19,9 @@
   },
   "homepage": "https://github.com/comopra/choirs-submit#readme",
   "dependencies": {
-    "ld-query": "^0.3.0",
-    "jsonld": "^0.4.11"
+    "debug": "^2.2.0",
+    "jsonld": "^0.4.11",
+    "ld-query": "^0.3.0"
   },
   "devDependencies": {
     "glob-promise": "^1.0.6",
