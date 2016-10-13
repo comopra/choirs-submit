@@ -29,7 +29,7 @@ StorageOperation.prototype = Object.assign( new LambdaOperation(), {
         const actualContentType = this.evt.headers[ "Content-Type" ];
         if ( !~allowedContentTypes.indexOf( actualContentType ) ) {
             
-            return this.callbackAndReject( 416, "Unsupported content type: " + actualContentType );
+            return this.callbackAndReject( 415, "Unsupported content type: " + actualContentType );
 
         }
         

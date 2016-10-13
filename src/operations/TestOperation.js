@@ -2,6 +2,14 @@ const BaseOperation = require( "./BaseOperation" );
 
 function TestOperation() { }
 
+const describeOutcome = ( outcome, i ) => {
+    
+    const status = outcome.status, name = outcome.name, args = outcome.args; // destructuriiiiiiiiiiii
+    i = ( typeof i === "undefined" ) ? "-" : ( i + 1 );
+    console.log( "%s %s %s %s", i, status, name, [].join.call( args, ", " ) );
+    
+}
+
 TestOperation.prototype = Object.assign( {}, new BaseOperation(), {
 
     constructor: TestOperation,
@@ -15,15 +23,21 @@ TestOperation.prototype = Object.assign( {}, new BaseOperation(), {
         this.promise = base.call( this, script ).then( () => {
           
             console.log( "Test run ended" );
+            console.log();
+            const nonfailures = this.outcomes.filter( x => x.status !== "FAIL" );
+            nonfailures.forEach( outcome => describeOutcome( outcome ) );
+            console.log();
             const failures = this.outcomes.filter( x => x.status === "FAIL" );
             failures.forEach( ( fail, i ) => {
                 
-                const status = fail.status, name = fail.name, args = fail.args, output = fail.output; // destructuriiiiiiiiiiii
-                console.log( "%d %s %s %s", i + 1, status, name, [].join.call( args, ", " ) );
+                describeOutcome( fail, i );
+                const output = fail.output;
                 console.log( ( output && output.toString ) ? output.toString() : output );
                 console.log();
                 
             } );
+            console.log( "---\n%d tests executed", this.outcomes.length );
+            console.log( "Failed: %d. Passed: %d", failures.length, nonfailures.length );
             if ( failures ) { return Promise.reject( failures.length + " tests failed" ); }
 
         } );
@@ -35,7 +49,7 @@ TestOperation.prototype = Object.assign( {}, new BaseOperation(), {
         
         return () => {
             
-            console.log( "/-- Test: %s\n", name );
+            console.log( "\n/-- Test: %s\n", name );
             return Promise.resolve();
             
         };
@@ -47,11 +61,10 @@ TestOperation.prototype = Object.assign( {}, new BaseOperation(), {
         const status = isPass ? "PASS": "FAIL";
         return output => {
             
-            console.log( "Returning promise to", status, "for", name );
             return new Promise( process.nextTick ).then( () => {
                 
                 this.outcomes.push( { name, args, status, output } );
-                console.log( "\\-- %s: %s %s\n", status, name, isPass ? "" : output );
+                console.log( "\n\\-- %s: %s %s\n", status, name, isPass ? "" : output );
               
             } );
             

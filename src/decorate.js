@@ -4,7 +4,6 @@ function buildProxy( target, prop, functionDecorator ) {
         
         const invoke = () => {
 
-console.log( "Invoking", target.constructor.name, prop );
             const proxiedFunc = target[ prop ];    
             return proxiedFunc.apply( target, arguments );
             
