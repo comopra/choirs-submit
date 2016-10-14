@@ -1,5 +1,5 @@
 module.exports = op => op
-    .shouldOnlyAccept( [ "POST" ] )
+    .shouldOnlyAccept( [ "POST", "PUT" ] )
     .shouldOnlySupportContentTypes( [ "application/ld+json" ] )
     .shouldParseBodyAsJSONLD()
     .shouldHaveSchema( "choir" )

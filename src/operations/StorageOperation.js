@@ -1,11 +1,15 @@
-const LambdaOperation = require( "./LambdaOperation" );
 const jsonld = require( "jsonld" );
+const shortid = require( "shortid" );
+
+const LambdaOperation = require( "./LambdaOperation" );
+
 const ldvalidate = require( "../ld-validate" );
 const schemas = require( "../../schema" );
+const eor = require( "../eor" );
 
-function StorageOperation( evt, context, callback ) {
+function StorageOperation( options, callback ) {
     
-    LambdaOperation.call( this, evt, context, callback );
+    LambdaOperation.call( this, options, callback );
     
 }
 
@@ -15,7 +19,7 @@ StorageOperation.prototype = Object.assign( new LambdaOperation(), {
     
     shouldOnlyAccept: function( allowedMethods ) {
         
-        const actualMethod = this.evt.httpMethod;
+        const actualMethod = this.event.httpMethod;
         if ( !~allowedMethods.indexOf( actualMethod ) ) {
             
             return this.callbackAndReject( 405, "Method not allowed: " + actualMethod );
@@ -26,7 +30,7 @@ StorageOperation.prototype = Object.assign( new LambdaOperation(), {
     
     shouldOnlySupportContentTypes: function( allowedContentTypes ) {
         
-        const actualContentType = this.evt.headers[ "Content-Type" ];
+        const actualContentType = this.event.headers[ "Content-Type" ];
         if ( !~allowedContentTypes.indexOf( actualContentType ) ) {
             
             return this.callbackAndReject( 415, "Unsupported content type: " + actualContentType );
@@ -39,11 +43,11 @@ StorageOperation.prototype = Object.assign( new LambdaOperation(), {
         
         return new Promise( ( resolve, reject ) => {
     
-            const diagnose = e => console.log( e.stack ) || console.log( "Body:", this.evt.body );
+            const diagnose = e => console.log( e.stack ) || console.log( "Body:", this.event.body );
             var payload;
             try {
             
-                payload = JSON.parse( this.evt.body );
+                payload = JSON.parse( this.event.body );
                 
             } catch ( e ) {
 
@@ -73,7 +77,7 @@ StorageOperation.prototype = Object.assign( new LambdaOperation(), {
     
     shouldHaveSchema: function( schemaName ) {
 
-        const diagnose = e => console.log( e.stack ) || console.log( "Body:", this.evt.body );
+        const diagnose = e => console.log( e.stack ) || console.log( "Body:", this.event.body );
         return new Promise( ( resolve, reject ) => {
             
             const validate = ldvalidate( schemas, schemas[ "context" ] );
@@ -97,9 +101,51 @@ StorageOperation.prototype = Object.assign( new LambdaOperation(), {
         
     },
     
-    shouldBeStoredInS3: () => Promise.reject( "Not implemented" ),
+    shouldBeStoredInS3: function() {
+        
+        const data = JSON.parse( this.event.body );
+        if ( !data[ "@id" ] ) {
+            
+            data[ "@id" ] = [
+                
+                "http://worldchoirs.comopra.com/choirs/",
+                data.name.toLowerCase().replace( /[^a-z0-9]/g, "-" ),
+                "-",
+                shortid.generate()
+                
+            ].join( "" );
+            
+        }
+        const id = /\/([^\/]*\/[^\/]*)$/.exec( data[ "@id" ] )[ 1 ];
+        const isPUT = this.event.httpMethod === "PUT";
+        if ( isPUT && !new RegExp( id + "$" ).test( this.event.path ) ) {
+            
+            return this.callbackAndReject( 422, "Entity @id does not match this location" );
+            
+        } else {
     
-    shouldIndicateResult: () => Promise.reject( "Not implemented" )
+            return new Promise( ( resolve, reject ) => 
+        
+                this.ports.db.putObject( {
+                
+                    Bucket: this.config.bucket,
+                    Key: id,
+                    Body: JSON.stringify( data )
+                
+                }, eor( reject, resolve ) ) 
+        
+            );
+            
+        }
+        
+    },
+    
+    shouldIndicateResult: function() {
+    
+        this.callback();
+        return Promise.resolve( "Not implemented" );
+        
+    }
     
 } );
 

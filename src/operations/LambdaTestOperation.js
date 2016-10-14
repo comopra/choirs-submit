@@ -16,6 +16,7 @@ function LambdaTestOperation( systemUnderTest ) {
     if ( systemUnderTest ) {
 
         this.handler = systemUnderTest.handler;
+        this.ports = systemUnderTest.ports;
         
     }
     
@@ -30,19 +31,27 @@ LambdaTestOperation.prototype = Object.assign( new TestOperation(), {
         return new Promise( ( resolve, reject ) => {
         
             const callback = callbackFactory( resolve, reject );
-            this.handler( evt, context, ( e, result ) => {
-               
-                try {
-                    
-                    callback( e, result );
-                    
-                } catch( e ) {
-                    
-                    reject( e );
-                    
-                }
+            try {
                 
-            } );
+                this.handler( evt, context, ( e, result ) => {
+
+                    try {
+                        
+                        callback( e, result );
+                        
+                    } catch( e ) {
+                        
+                        reject( e );
+                        
+                    }
+                    
+                } );
+            
+            } catch ( synchronousError ) {
+                
+                callback( synchronousError );
+                
+            }
 
         } );
         

@@ -1,4 +1,8 @@
     
+    // mocks
+    const fakeConfig = { bucket: "the-bucket" };
+    require( "./aws-sdk" )( fakeConfig );
+
     // script to test
     const script = require( "../src/script" );
     

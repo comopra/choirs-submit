@@ -1,8 +1,14 @@
 const BaseOperation = require( "./BaseOperation" );
-function LambdaOperation( evt, context, callback ) {
+function LambdaOperation( options, callback ) {
     
-    this.evt = evt;
-    this.context = context;
+    if ( options ) {
+        
+        this.event = options.event;
+        this.context = options.context;
+        this.ports = options.ports;
+        this.config = options.config;
+    
+    }
     this.callback = callback;
 
 }

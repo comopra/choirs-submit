@@ -1,5 +1,9 @@
 const LambdaTestOperation = require( "./LambdaTestOperation" );
 const glob = require( "glob-promise" );
+const eor = require( "../eor" );
+
+const examples = __dirname + "/../../schema/examples";
+const should = require( "should" );
 
 function StorageTestOperation( systemUnderTest ) {
     
@@ -99,7 +103,7 @@ StorageTestOperation.prototype = Object.assign( new LambdaTestOperation(), {
     
     shouldHaveSchema: function( schemaName ) {
         
-        return glob( __dirname + "/../../schema/examples/invalid/" + schemaName + "-*.json" )
+        return glob( examples + "/invalid/" + schemaName + "-*.json" )
             .then( filePaths =>
             
                 Promise.all( filePaths
@@ -136,7 +140,94 @@ StorageTestOperation.prototype = Object.assign( new LambdaTestOperation(), {
             
     },
     
-    shouldBeStoredInS3: () => Promise.reject( "Not implemented" ),
+    shouldBeStoredInS3: function() {
+        
+        const validDocument = require( examples + "/valid-choir.json" );
+        const evtForCreate = {
+                        
+            httpMethod: "POST",
+            headers: { "Content-Type": "application/ld+json" },
+            body: JSON.stringify( validDocument ),
+            path: "choirs/someid"
+    
+        };
+        const evtForUpdate = Object.assign( {}, evtForCreate, { 
+            
+            httpMethod: "PUT",
+            body: JSON.stringify( Object.assign( { "@id": "http://worldchoirs.comopra.com/choirs/someid" }, validDocument ) )
+            
+        } );
+        const evtForUpdateWithMismatchedId = Object.assign( {}, evtForUpdate, {
+            
+            path: "/choirs/someotherid"
+            
+        } );
+        return this.run( evtForCreate, null, ( resolve, reject ) => 
+        
+            eor( reject, () => {
+    
+                const lastCall = this.ports.db.calls.pop();
+                should.exist( lastCall, "db was not called" );
+                
+                // should call putObject
+                const target = lastCall.target;
+                target.name.should.eql( "putObject" );
+                
+                const params = lastCall.args[ 0 ];
+                
+                // bucket from configuration
+                params.Bucket.should.eql( "the-bucket" );
+
+                // assigned key
+                params.Key.should.match( /^choirs\/the-big-bang-choir-[A-Za-z0-9_-]*$/ );
+                
+                // check body
+                const actual = JSON.parse( params.Body );
+                const expected = Object.assign( { "@id": "http://worldchoirs.comopra.com/" + params.Key }, validDocument );
+                actual.should.eql( expected );
+                resolve();
+                
+            } )
+        
+        ).then( () => this.run( evtForUpdate, null, ( resolve, reject ) => 
+        
+            eor( reject, result => {
+
+                const lastCall = this.ports.db.calls.pop();
+                should.exist( lastCall, "db was not called" );
+                
+                // should call putObject
+                const target = lastCall.target;
+                target.name.should.eql( "putObject" );
+                
+                const params = lastCall.args[ 0 ];
+                
+                // bucket from configuration
+                params.Bucket.should.eql( "the-bucket" );
+                
+                // assigned key
+                params.Key.should.eql( "choirs/someid" );
+                
+                // check body
+                const actual = JSON.parse( params.Body );
+                const expected = Object.assign( { "@id": "http://worldchoirs.comopra.com/choirs/someid" }, validDocument );
+                actual.should.eql( expected );
+                resolve();
+                
+            } )
+            
+        ) ).then( () => this.run( evtForUpdateWithMismatchedId, null, ( resolve, reject ) => 
+        
+            this.verifyStatusCode( 422, [
+                        
+                "Should reject a PUT where the id does not match the URL",
+                "The test sent " + evtForUpdateWithMismatchedId.body,
+            
+            ], resolve, reject )
+            
+        ) );
+
+    },
     
     shouldIndicateResult: () => Promise.reject( "Not implemented" )
     

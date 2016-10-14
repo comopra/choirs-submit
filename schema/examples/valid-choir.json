@@ -1,7 +1,7 @@
 {
     "@context": { "@vocab": "http://schema.org/" },
     "@type": "Organization",
-    "name": "porky",
+    "name": "The Big Bang Choir",
     "location": {
         
         "@type": "Place",
