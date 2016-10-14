@@ -3,7 +3,9 @@ const eor = require( "./eor" );
 
 const exported = { load: () => fetchConfiguration };
 
-const validateConfiguration = config => {
+const parse = response => console.log( response ) || JSON.parse( response.Body );
+
+const validate = config => {
   
   if ( !config.bucket ) { throw new Error( "Missing: bucket" ); }
   return Promise.resolve( config );
@@ -20,9 +22,10 @@ const fetchConfiguration = new Promise( ( resolve, reject ) => {
         Bucket: "comopra.com-config",
         Key: "comopra-choirs-submit"
         
-    }, eor( reject, config => 
+    }, eor( reject, result => 
     
-        validateConfiguration( config )
+        Promise.resolve( parse( result ) )
+            .then( config => validate( config ) )
             .then( exportConfiguration )
             .then( resolve, reject )
 

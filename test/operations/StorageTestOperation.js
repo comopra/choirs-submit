@@ -1,9 +1,11 @@
-const LambdaTestOperation = require( "./LambdaTestOperation" );
 const glob = require( "glob-promise" );
-const eor = require( "../eor" );
-
-const examples = __dirname + "/../../schema/examples";
+const jsonld = require( "jsonld" );
 const should = require( "should" );
+
+const LambdaTestOperation = require( "./LambdaTestOperation" );
+
+const eor = require( "../../src/eor" );
+const examples = __dirname + "/../examples";
 
 function StorageTestOperation( systemUnderTest ) {
     
@@ -182,10 +184,15 @@ StorageTestOperation.prototype = Object.assign( new LambdaTestOperation(), {
                 params.Key.should.match( /^choirs\/the-big-bang-choir-[A-Za-z0-9_-]*$/ );
                 
                 // check body
+                
                 const actual = JSON.parse( params.Body );
                 const expected = Object.assign( { "@id": "http://worldchoirs.comopra.com/" + params.Key }, validDocument );
-                actual.should.eql( expected );
-                resolve();
+                jsonld.expand( expected, eor( reject, expanded => {
+                    
+                    actual.should.eql( expanded ); 
+                    resolve();
+                    
+                } ) );
                 
             } )
         
@@ -211,8 +218,12 @@ StorageTestOperation.prototype = Object.assign( new LambdaTestOperation(), {
                 // check body
                 const actual = JSON.parse( params.Body );
                 const expected = Object.assign( { "@id": "http://worldchoirs.comopra.com/choirs/someid" }, validDocument );
-                actual.should.eql( expected );
-                resolve();
+                jsonld.expand( expected, eor( reject, expanded => {
+                    
+                    actual.should.eql( expanded ); 
+                    resolve();
+                    
+                } ) );
                 
             } )
             

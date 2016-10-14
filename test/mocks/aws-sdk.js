@@ -17,7 +17,7 @@ module.exports = function( testConfig ) {
         this.calls.push( { target: this.getObject, args: [ params ] } );
         if ( params.Bucket === "comopra.com-config" && params.Key === "comopra-choirs-submit" ) {
     
-            callback( null, testConfig );   
+            callback( null, { Body: JSON.stringify( testConfig ) } );   
             
         } else {
     

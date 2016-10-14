@@ -4,7 +4,7 @@
   "description": "Submit a new choir to the choirs of the world map",
   "scripts": {
     "test": "node test",
-    "zip": "npm prune --production; zip -FSr dist/index.zip . -x \"dist/*\" \".*\"",
+    "zip": "npm prune --production; rm -rf node_modules/aws-sdk; zip -FSr dist/index.zip . -x \"dist/*\" \".*\"",
     "publish": "aws lambda update-function-code --function-name ChoirsSubmit --zip-file fileb://dist/index.zip",
     "zipublish": "npm run zip; npm run publish; npm install;"
   },

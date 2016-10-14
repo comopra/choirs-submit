@@ -1,6 +1,6 @@
 const TestOperation = require( "./TestOperation" );
 const should = require( "should" );
-const eor = require( "../eor" );
+const eor = require( "../../src/eor" );
 
 function paragraph() { return [].reduce.call( arguments, ( ret, a ) => ret.concat( a || [] ), [] ).join( ". " ) + "."; }
 

@@ -13,12 +13,18 @@
     const shortid = require( "shortid" );
     
     // diagnose what went wrong and sanitize the output
-    const sanitizeError = maybeError => {
+    const sanitizeError = callback => maybeError => {
         
         const errNum = shortid.generate();
-        console.error( "[ ERROR", errNum, "]", maybeError.stack || maybeError );
-        throw new Error( "An error occurred processing the request. [ Error code: " + errNum + " ]" );
-        
+        console.log( "[ ERROR", errNum, "]", maybeError.stack || maybeError );
+        callback( null, { 
+            
+            "headers": { "Content-Type": "text/plain" },
+            "statusCode": 500, 
+            "body": "An error occurred processing the request. [ Error code: " + errNum + " ]"
+            
+        } );
+            
     };
 
     // ports to external resources (e.g. db)
@@ -26,14 +32,10 @@
     
     // the handler
     const handler = ( event, context, callback ) => ensureConfiguration
-        .then( () => new StorageOperation( 
-            
-            { ports, event, context, config }, 
-            callback 
-        
-        ).execute( script ) )
-        .catch( sanitizeError )
-        .catch( callback );
+        .then( () => 
+            new StorageOperation( { ports, event, context, config }, callback )
+                .execute( script ) )
+        .catch( sanitizeError( callback ) );
 
     // export it
     module.exports = { handler, ports };

@@ -1,4 +1,4 @@
-const BaseOperation = require( "./BaseOperation" );
+const BaseOperation = require( "../../src/operations/BaseOperation" );
 
 function TestOperation() { }
 

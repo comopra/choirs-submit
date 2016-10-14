@@ -1,13 +1,13 @@
     
     // mocks
     const fakeConfig = { bucket: "the-bucket" };
-    require( "./aws-sdk" )( fakeConfig );
+    require( "./mocks/aws-sdk" )( fakeConfig );
 
     // script to test
     const script = require( "../src/script" );
     
     // testing operation
-    const StorageTestOperation = require( "../src/operations/StorageTestOperation" );
+    const StorageTestOperation = require( "./operations/StorageTestOperation" );
     
     // thing to test
     const systemUnderTest = require( ".." );
