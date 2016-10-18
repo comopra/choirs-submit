@@ -1,5 +1,7 @@
 const BaseOperation = require( "../../src/operations/BaseOperation" );
 
+Array.prototype.except = Array.prototype.except || function( xs ) { return this.filter( y => !~xs.indexOf( y ) ); };
+
 function TestOperation() { }
 
 const describeOutcome = ( outcome, i ) => {
