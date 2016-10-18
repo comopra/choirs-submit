@@ -13,7 +13,7 @@ StorageTestOperation.prototype = Object.assign( new LambdaTestOperation(), {
     shouldParseBodyAsJSONLD:        require( "./steps/should-parse-body-as-JSONLD" ),
     shouldHaveSchema:               require( "./steps/should-have-schema" )( examples ),
     shouldBeStoredInS3:             require( "./steps/should-be-stored-in-S3" )( examples ),
-    shouldIndicateResult:           () => Promise.reject( "Not implemented" )
+    shouldIndicateResult:           require( "./steps/should-indicate-result" )( examples )
     
 } );
 module.exports = StorageTestOperation;

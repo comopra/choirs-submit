@@ -9,7 +9,7 @@ module.exports = function( testConfig ) {
     S3.prototype.putObject = function putObject( params, callback ) {
         
         this.calls.push( { target: this.putObject, args: [ params ] } );
-        callback();
+        callback( null, { VersionId: "1.0.0" } );
         
     };
     S3.prototype.getObject = function getObject( params, callback ) {

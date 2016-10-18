@@ -137,7 +137,12 @@ StorageOperation.prototype = Object.assign( new LambdaOperation(), {
             };
             return new Promise( ( resolve, reject ) => 
         
-                this.ports.db.putObject( payload, eor( reject, resolve ) ) 
+                this.ports.db.putObject( payload, eor( reject, data => {
+
+                    this.s3response = data;
+                    resolve();
+                    
+                } ) ) 
         
             );
             
@@ -147,8 +152,13 @@ StorageOperation.prototype = Object.assign( new LambdaOperation(), {
     
     shouldIndicateResult: function() {
     
-        this.callback();
-        return Promise.resolve( "Not implemented" );
+        const data = this.body[ 0 ];
+        const doc = ldquery( data, { "so": "http://schema.org/" } );
+        const docid = doc.query( "> @id" );
+        const headers = { Location: docid };
+        const statusCode = 204;
+        this.callback( null, { statusCode, headers } );
+        return Promise.resolve( docid );
         
     }
     

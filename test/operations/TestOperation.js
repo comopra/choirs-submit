@@ -34,13 +34,17 @@ TestOperation.prototype = Object.assign( {}, new BaseOperation(), {
                 
                 describeOutcome( fail, i );
                 const output = fail.output;
-                console.log( ( output && output.toString ) ? output.toString() : output );
+                console.log( output ? output.stack || output : output );
                 console.log();
                 
             } );
             console.log( "---\n%d tests executed", this.outcomes.length );
             console.log( "Failed: %d. Passed: %d", failures.length, nonfailures.length );
-            if ( failures ) { return Promise.reject( failures.length + " tests failed" ); }
+            if ( failures.length ) { 
+                
+                return Promise.reject( failures.length + " tests failed" );
+                
+            }
 
         } );
         return this.promise;
