@@ -1,4 +1,4 @@
-const ldvalidate = require( "../../ld-validate" );
+const ldvalidate = require( "ld-validate" );
 
 module.exports = schemas => function shouldHaveSchema( schemaName ) {
 
