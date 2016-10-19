@@ -24,6 +24,7 @@
     "jsonld": "^0.4.11",
     "ld-query": "^0.3.0",
     "ld-validate": "0.0.2",
+    "operation-lambda": "goofballlogic/operation-lambda",
     "shortid": "^2.2.6"
   },
   "devDependencies": {
