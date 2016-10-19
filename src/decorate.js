@@ -2,18 +2,19 @@ function buildProxy( target, prop, functionDecorator ) {
     
     return function proxy() { 
         
-        const invoke = () => {
+        const originalArguments = arguments;
+        const invokeProxiedFunction = () => {
 
-            const proxiedFunc = target[ prop ];    
-            return proxiedFunc.apply( target, arguments );
+            const proxiedFunction = target[ prop ];    
+            return proxiedFunction.apply( target, originalArguments );
             
         };
         return functionDecorator.call( 
             
             target, 
             prop, 
-            arguments,
-            invoke
+            originalArguments,
+            invokeProxiedFunction
         
         );
 
