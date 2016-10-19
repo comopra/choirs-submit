@@ -1,27 +1,15 @@
-    
-    // ensure configuration is loaded in
-    const config = require( "./src/config" );
-    const ensureConfiguration = config.load(); 
+// the ports
+const ports = require( "./src/ports" );
 
-    // script to execute
-    const script = require( "./src/script" );
+// the handler
+const handler = require( "operation-lambda/src/handler" )( { 
     
-    // a storage operation
-    const StorageOperation = require( "./src/operations/StorageOperation" );
-    
-    // ports to external resources (e.g. db)
-    const ports = require( "./src/ports" );
-    
-    // the handler
-    const handler = ( event, context, callback ) => {
-    
-        const op = new StorageOperation( { ports, event, context, config } );
-        const completion = payload => ports.send( payload, callback );
-        ensureConfiguration
-            .then( () => op.execute( script )  )
-            .then( completion, completion );
+    config: require( "./src/config" ),
+    script: require( "./src/script" ),
+    Operation: require( "./src/operations/StorageOperation" ),
+    ports: ports
 
-    };
-    
-    // export it
-    module.exports = { handler, ports };
+} );
+
+// export it
+module.exports = { handler, ports };
