@@ -15,16 +15,12 @@ module.exports = function( supportedContentTypes ) {
             )
             .map( evt =>
         
-                this.run( evt, null, ( resolve, reject ) => 
+                this.run( evt, null, this.verifyStatusCode( 415, [
                 
-                    this.verifyStatusCode( 415, [
-                
-                        "Should only accept Content Types: " + supportedContentTypes.join( ", " ),
-                        "The test sent: " + evt.headers[ "Content-Type" ]
+                    "Should only accept Content Types: " + supportedContentTypes.join( ", " ),
+                    "The test sent: " + evt.headers[ "Content-Type" ]
             
-                    ], resolve, reject )
-                    
-                )
+                ] ) )
         
             );
 

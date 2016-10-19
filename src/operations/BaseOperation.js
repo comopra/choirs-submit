@@ -11,9 +11,17 @@ BaseOperation.prototype.callProxy = function( name, args, invoke )  {
     
     this.promise = this.promise.then( () => {
 
-        var invoked = [].concat( invoke() || [] );
-        return Promise.all( invoked );
-    
+        const invoked = invoke();
+        if ( Array.isArray( invoked ) ) {
+            
+            return Promise.all( invoked );
+            
+        } else {
+            
+            return invoked;
+            
+        }
+
     } );
     
 };

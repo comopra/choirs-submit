@@ -13,24 +13,32 @@ module.exports = examples => function() {
         path: "choirs/someid"
 
     };
-    return this.run( evtForCreate, null, ( resolve, reject ) => 
-        
-        this.verifyStatusCode( 204, [ "Should indicate created" ], resolve, reject )
-
-    ).then( () => this.run( evtForCreate, null, ( resolve, reject ) => 
+    return this.run( evtForCreate, null, 
     
-        eor( reject, result => {
+        this.verifyStatusCode( 204, [ "Should indicate created" ] )
 
-            const lastCall = this.ports.db.calls.pop();
-            should.exist( lastCall, "db was not called" );
-            const params = lastCall.args[ 0 ];
-            const actual = JSON.parse( params.Body );
-            const docid = ldquery( actual, { "dummy": "" } ).query( "> @id" );
-            result.headers.Location.should.eql( docid );
-            resolve();
-            
-        } )
-        
-    ) );
+    ).then( () => this.run( evtForCreate, null, ( e, result, callback ) => {
+    
+        if ( e ) { callback( e ); } else {
+
+            try {
+                
+                const lastCall = this.ports.db.calls.pop();
+                should.exist( lastCall, "db was not called" );
+                const params = lastCall.args[ 0 ];
+                const actual = JSON.parse( params.Body );
+                const docid = ldquery( actual, { "dummy": "" } ).query( "> @id" );
+                result.headers.Location.should.eql( docid );
+                callback();
+                
+            } catch( e ) {
+                
+                callback( e );
+                
+            }
+
+        }    
+
+    } ) );
 
 };

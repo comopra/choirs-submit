@@ -20,16 +20,12 @@ module.exports = examples => function( schemaName ) {
                 )
                 .map( evt => 
         
-                    this.run( evt, null, ( resolve, reject ) => 
-            
-                        this.verifyStatusCode( 422, [
+                    this.run( evt, null, this.verifyStatusCode( 422, [
                     
-                            "Should validate against the schema " + schemaName,
-                            "The test sent " + evt.body,
-        
-                        ], resolve, reject )
-            
-                    )
+                        "Should validate against the schema " + schemaName,
+                        "The test sent " + evt.body,
+    
+                    ] ) )
         
                 )
                 

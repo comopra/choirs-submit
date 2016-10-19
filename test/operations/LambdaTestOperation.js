@@ -1,15 +1,7 @@
 const TestOperation = require( "./TestOperation" );
 const should = require( "should" );
-const eor = require( "../../src/eor" );
 
 function paragraph() { return [].reduce.call( arguments, ( ret, a ) => ret.concat( a || [] ), [] ).join( ". " ) + "."; }
-
-function assertStatusCode( expectedStatusCode, result ) {
-    
-    should.exist( result.statusCode, "Status code should exist" );
-    result.statusCode.should.eql( expectedStatusCode, "Expected status " + expectedStatusCode + " but got " + result.statusCode );
-        
-}
 
 function LambdaTestOperation( systemUnderTest ) {
     
@@ -26,22 +18,40 @@ LambdaTestOperation.prototype = Object.assign( new TestOperation(), {
     
     constructor: LambdaTestOperation,
     
-    run: function run( evt, context, callbackFactory ) {
+    // given an event object and context object, 
+    run: function run( evt, context, assertion ) {
         
         return new Promise( ( resolve, reject ) => {
         
-            const callback = callbackFactory( resolve, reject );
+            function completePromise( assertionError ) {
+                
+                // did the assertion pass or fail?
+                if ( assertionError ) { 
+
+                    reject( assertionError );
+                  
+                } else {
+
+                    resolve();
+                
+                }
+                          
+            }
+            
             try {
                 
-                this.handler( evt, context, ( e, result ) => {
+                // invoke the handler
+                this.handler( evt, context, ( handlerError, result ) => {
 
                     try {
                         
-                        callback( e, result );
+                        // pass the results (and error) to the assertion
+                        assertion( handlerError, result, completePromise );
                         
-                    } catch( e ) {
+                    } catch( synchronousAssertionError ) {
                         
-                        reject( e );
+                        // a synchronous error calling the assertion should just reject
+                        completePromise( synchronousAssertionError );
                         
                     }
                     
@@ -49,7 +59,8 @@ LambdaTestOperation.prototype = Object.assign( new TestOperation(), {
             
             } catch ( synchronousError ) {
                 
-                callback( synchronousError );
+                // if we get a synchronous error invoking the handler, pass that to the assertion
+                assertion( synchronousError, null, completePromise );
                 
             }
 
@@ -57,22 +68,35 @@ LambdaTestOperation.prototype = Object.assign( new TestOperation(), {
         
     },
     
-    verifyStatusCode: function verifyStatusCode( expectedStatusCode, description, resolve, reject ) {
-    
-        return eor( reject, result => {
-            
+    verifyStatusCode: function verifyStatusCode( expectedStatusCode, description ) {
+
+        return ( e, result, callback ) => {
+
+            if ( e ) { callback( e ); return; }
             try {
-        
-                assertStatusCode( expectedStatusCode, result );
-            
+                
+                should.exist(
+                    
+                    result.statusCode,
+                    "Status code should exist"
+                    
+                );
+                result.statusCode.should.eql( 
+                    
+                    expectedStatusCode, 
+                    "Expected status " + expectedStatusCode + " but got " + result.statusCode
+                    
+                );
+
             } catch( e ) {
                 
-                throw new Error( paragraph( e.message, description ) );
+                callback( new Error( paragraph( e.message, description ) ) );
+                return;
                 
-            }
-            resolve();
-                
-        } );
+            }   
+            callback();
+
+        };
         
     }
     

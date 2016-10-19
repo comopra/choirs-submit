@@ -23,7 +23,8 @@ StorageOperation.prototype = Object.assign( new LambdaOperation(), {
         const actualMethod = this.event.httpMethod;
         if ( !~allowedMethods.indexOf( actualMethod ) ) {
             
-            return this.callbackAndReject( 405, "Method not allowed: " + actualMethod );
+            const payload = this.payload( 405, "Method not allowed: " + actualMethod, "text/plain" );
+            return Promise.reject( payload );
 
         }
 
@@ -34,7 +35,8 @@ StorageOperation.prototype = Object.assign( new LambdaOperation(), {
         const actualContentType = this.event.headers[ "Content-Type" ];
         if ( !~allowedContentTypes.indexOf( actualContentType ) ) {
             
-            return this.callbackAndReject( 415, "Unsupported content type: " + actualContentType );
+            const payload = this.payload( 415, "Unsupported content type: " + actualContentType, "text/plain" );
+            return Promise.reject( payload );
 
         }
         
@@ -49,28 +51,28 @@ StorageOperation.prototype = Object.assign( new LambdaOperation(), {
             try {
             
                 payload = JSON.parse( this.event.body );
+                jsonld.expand( payload, ( e, expanded ) => {
+            
+                    if ( e ) { 
+                        
+                        diagnose( e );
+                        reject( this.payload( 422, "Unprocessable entity", "text/plain" ) );
+    
+                    } else {
+                        
+                        this.body = expanded;
+                        resolve();
+                        
+                    }
                 
+                } );
+
             } catch ( e ) {
 
                 diagnose( e );
-                return this.callbackAndReject( 422, "Unprocessable entity", reject );
+                reject( this.payload( 422, "Unprocessable entity", "text/plain" ) );
                 
             }
-            jsonld.expand( payload, ( e, expanded ) => {
-            
-                if ( e ) { 
-                    
-                    diagnose( e );
-                    return this.callbackAndReject( 422, "Unprocessable entity", reject );
-                
-                } else {
-                    
-                    this.body = expanded;
-                    resolve();
-                    
-                }
-                
-            } );
             
         } );
         
@@ -88,7 +90,8 @@ StorageOperation.prototype = Object.assign( new LambdaOperation(), {
                     
                     diagnose( e );
                     const message = [ "Unprocessable entity", e.message ].join( "\n\n" );
-                    return this.callbackAndReject( 422, message, reject );
+                    const payload = this.payload( 422, message, "text/plain" );
+                    reject( payload );
                     
                 } else {
                     
@@ -124,11 +127,12 @@ StorageOperation.prototype = Object.assign( new LambdaOperation(), {
         const isPUT = this.event.httpMethod === "PUT";
         if ( isPUT && !new RegExp( id + "$" ).test( this.event.path ) ) {
             
-            return this.callbackAndReject( 422, "Entity @id does not match this location" );
+            const payload = this.payload( 422, "Entity @id does not match this location" );
+            return Promise.reject( payload );
             
         } else {
     
-            const payload = {
+            const S3payload = {
                 
                 Bucket: this.config.bucket,
                 Key: id,
@@ -137,7 +141,7 @@ StorageOperation.prototype = Object.assign( new LambdaOperation(), {
             };
             return new Promise( ( resolve, reject ) => 
         
-                this.ports.db.putObject( payload, eor( reject, data => {
+                this.ports.db.putObject( S3payload, eor( reject, data => {
 
                     this.s3response = data;
                     resolve();
@@ -156,9 +160,8 @@ StorageOperation.prototype = Object.assign( new LambdaOperation(), {
         const doc = ldquery( data, { "so": "http://schema.org/" } );
         const docid = doc.query( "> @id" );
         const headers = { Location: docid };
-        const statusCode = 204;
-        this.callback( null, { statusCode, headers } );
-        return Promise.resolve( docid );
+        const payload = this.payload( 204, undefined, headers );
+        return Promise.resolve( payload );
         
     }
     

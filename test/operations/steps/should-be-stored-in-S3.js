@@ -24,73 +24,105 @@ module.exports = examples => function() {
         path: "/choirs/someotherid"
         
     } );
-    return this.run( evtForCreate, null, ( resolve, reject ) => 
+    return this.run( evtForCreate, null, ( e, result, callback ) => {
 
-        eor( reject, () => {
-
-            // should call putObject
-            const lastCall = this.ports.db.calls.pop();
-            should.exist( lastCall, "db was not called" );
-            const target = lastCall.target;
-            target.name.should.eql( "putObject" );
-            const params = lastCall.args[ 0 ];
+        if ( e ) {  callback( e ); } else {
             
-            // bucket should be retrieved from the configuration
-            params.Bucket.should.eql( "the-bucket" );
-
-            // a key should be assigned which contains the munged name
-            params.Key.should.match( /^choirs\/the-big-bang-choir-[A-Za-z0-9_-]*$/ );
-            
-            // the body should have had the @id added to it
-            const actual = JSON.parse( params.Body );
-            const expected = Object.assign( { "@id": "http://worldchoirs.comopra.com/" + params.Key }, validDocument );
-            jsonld.expand( expected, eor( reject, expanded => {
+            try {
                 
-                actual.should.eql( expanded ); 
-                resolve();
-                
-            } ) );
             
-        } )
+                // should call putObject
+                const lastCall = this.ports.db.calls.pop();
+                should.exist( lastCall, "db was not called" );
+                const target = lastCall.target;
+                target.name.should.eql( "putObject" );
+                const params = lastCall.args[ 0 ];
+                
+                // bucket should be retrieved from the configuration
+                params.Bucket.should.eql( "the-bucket" );
     
-    ).then( () => this.run( evtForUpdate, null, ( resolve, reject ) => 
-    
-        eor( reject, result => {
-
-            // should call putObject
-            const lastCall = this.ports.db.calls.pop();
-            should.exist( lastCall, "db was not called" );
-            const target = lastCall.target;
-            target.name.should.eql( "putObject" );
-            const params = lastCall.args[ 0 ];
-            
-            // bucket from configuration
-            params.Bucket.should.eql( "the-bucket" );
-            
-            // key should be determined by the document's @id
-            params.Key.should.eql( "choirs/someid" );
-            
-            // check body still has the @id
-            const actual = JSON.parse( params.Body );
-            const expected = Object.assign( { "@id": "http://worldchoirs.comopra.com/choirs/someid" }, validDocument );
-            jsonld.expand( expected, eor( reject, expanded => {
+                // a key should be assigned which contains the munged name
+                params.Key.should.match( /^choirs\/the-big-bang-choir-[A-Za-z0-9_-]*$/ );
                 
-                actual.should.eql( expanded ); 
-                resolve();
+                // the body should have had the @id added to it
+                const actual = JSON.parse( params.Body );
+                const expected = Object.assign( { "@id": "http://worldchoirs.comopra.com/" + params.Key }, validDocument );
+                jsonld.expand( expected, eor( callback, expanded => {
                 
-            } ) );
-            
-        } )
-        
-    ) ).then( () => this.run( evtForUpdateWithMismatchedId, null, ( resolve, reject ) => 
-    
-        // if the @id of the document doesn't match that of the URL
-        this.verifyStatusCode( 422, [
+                    try {
+                        
+                        actual.should.eql( expanded );
+                        callback();
+                        
+                    } catch( e ) {
+                        
+                        callback( e );
+                        
+                    }
                     
+                } ) );
+            
+            } catch( e ) {
+                
+                callback( e );
+                
+            }
+
+        }
+    
+    } ).then( () => this.run( evtForUpdate, null, ( e, result, callback ) => {
+
+        if ( e ) { callback( e ); } else {
+            
+            try {
+       
+                // should call putObject
+                const lastCall = this.ports.db.calls.pop();
+                should.exist( lastCall, "db was not called" );
+                const target = lastCall.target;
+                target.name.should.eql( "putObject" );
+                const params = lastCall.args[ 0 ];
+                
+                // bucket from configuration
+                params.Bucket.should.eql( "the-bucket" );
+                
+                // key should be determined by the document's @id
+                params.Key.should.eql( "choirs/someid" );
+                
+                // check body still has the @id
+                const actual = JSON.parse( params.Body );
+                const expected = Object.assign( { "@id": "http://worldchoirs.comopra.com/choirs/someid" }, validDocument );
+                jsonld.expand( expected, eor( callback, expanded => {
+                    
+                    try {
+                        
+                        actual.should.eql( expanded ); 
+                        callback();
+                        
+                    } catch ( e ) {
+                        
+                        callback( e );
+                        
+                    }
+                    
+                } ) );
+         
+            } catch ( e ) {
+                
+                callback( e );
+            }
+       
+        }    
+
+
+    } ) ).then( () => this.run( evtForUpdateWithMismatchedId, null, 
+    
+        this.verifyStatusCode( 422, [
+ 
             "Should reject a PUT where the id does not match the URL",
             "The test sent " + evtForUpdateWithMismatchedId.body,
         
-        ], resolve, reject )
+        ] )
         
     ) );
 

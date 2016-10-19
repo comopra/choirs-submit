@@ -14,16 +14,12 @@ module.exports = function() {
         )
         .map( evt => 
             
-            this.run( evt, null, ( resolve, reject ) => 
-            
-                this.verifyStatusCode( 422, [
+            this.run( evt, null, this.verifyStatusCode( 422, [
                     
-                    "Should parse the body as JSON-LD",
-                    "The test sent " + evt.body,
+                "Should parse the body as JSON-LD",
+                "The test sent " + evt.body,
 
-                ], resolve, reject )
-            
-            )
+            ] ) )
     
         );
     

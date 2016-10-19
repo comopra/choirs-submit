@@ -5,3 +5,5 @@ module.exports = op => op
     .shouldHaveSchema( "choir" )
     .shouldBeStoredInS3()
     .shouldIndicateResult()
+    ;
+    

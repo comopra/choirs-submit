@@ -5,16 +5,13 @@ module.exports = function( allowedMethods ) {
             .map( httpMethod => ( { httpMethod } ) )
             .map( evt =>
         
-                this.run( evt, null, ( resolve, reject ) => 
+                this.run( evt, null, this.verifyStatusCode( 405, [
                 
-                    this.verifyStatusCode( 405, [
-                
-                        "Should only accept HTTP methods: " + allowedMethods.join( ", " ),
-                        "The test sent a " + evt.httpMethod
-            
-                    ], resolve, reject )
-                    
-                )
+                    "Should only accept HTTP methods: " + allowedMethods.join( ", " ),
+                    "The test sent a " + evt.httpMethod
+        
+                ] ) )
                 
             );
+            
 };

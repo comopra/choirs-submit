@@ -80,7 +80,7 @@ TestOperation.prototype = Object.assign( {}, new BaseOperation(), {
     
     callProxy: function( name, args, invoke ) {
 
-        const base = BaseOperation.prototype.callProxy;
+        const base = BaseOperation.prototype.callProxy.bind( this );
         const start = this.startTest( name, args );
         const fail = this.completeTest( name, args, false );
         const succeed = this.completeTest( name, args, true );
@@ -88,7 +88,7 @@ TestOperation.prototype = Object.assign( {}, new BaseOperation(), {
         // promise to label the test
         this.promise = this.promise.then( start );
         // promise to run the test
-        base.call( this, name, args, invoke );
+        base( name, args, invoke );
         // promise to record a pass or fail for the test
         this.promise = this.promise.then( succeed, fail );
 
