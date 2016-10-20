@@ -36,16 +36,16 @@ module.exports = function shouldBeStoredInS3() {
             Body: JSON.stringify( this.body, null, 1 )
         
         };
-        return new Promise( ( resolve, reject ) => 
-    
-            this.ports.db.putObject( S3payload, eor( reject, data => {
+        return new Promise( ( resolve, reject ) => {
+
+            return this.ports.db.putObject( S3payload, eor( reject, data => {
 
                 this.s3response = data;
                 resolve();
                 
-            } ) ) 
+            } ) ); 
     
-        );
+        } );
         
     }
     
