@@ -1,6 +1,6 @@
 {
   "name": "comopra-choirs-submit",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "description": "Submit a new choir to the choirs of the world map",
   "scripts": {
     "test": "node test",
