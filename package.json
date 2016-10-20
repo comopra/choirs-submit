@@ -25,7 +25,7 @@
     "ld-query": "^0.3.0",
     "ld-validate": "0.0.2",
     "newrelic": "^1.31.0",
-    "operation-lambda": "goofballlogic/operation-lambda",
+    "operation-lambda": "goofballlogic/operation-lambda#v0.6.4",
     "shortid": "^2.2.6"
   },
   "devDependencies": {

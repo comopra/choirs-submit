@@ -14,6 +14,11 @@ const validate = config => {
       require( "newrelic" );
       
   }
+  if ( config.debug ) {
+      
+      config.debug.split( " " ).forEach( d => require( "debug" ).enable( d ) );
+
+  }
   return Promise.resolve( config );
     
 };
