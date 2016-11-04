@@ -11,12 +11,13 @@ const validate = config => {
   if ( config.newrelic ) {
       
       process.env.NEW_RELIC_LICENSE_KEY = config.newrelic.licenseKey;
-      require( "newrelic" );
+      const newrelic = require( "newrelic" );
+      config.teardown = callback => newrelic.shutdown( { collectPendingData: true }, callback );
       
   }
   if ( config.debug ) {
       
-      config.debug.split( " " ).forEach( d => require( "debug" ).enable( d ) );
+      config.debug.split( " " ).forEach( d => console.log( d ) || require( "debug" ).enable( d ) );
 
   }
   return Promise.resolve( config );

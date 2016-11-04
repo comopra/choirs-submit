@@ -1,4 +1,4 @@
-const fakeConfig = { bucket: "the-bucket" };
+const fakeConfig = { bucket: "the-bucket", debug: "operation-lambda" };
 require( "./mocks/aws-sdk" )( fakeConfig );
 
 const test = require( "operation-lambda/test-operations/test" );
