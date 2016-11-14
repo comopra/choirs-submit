@@ -1,4 +1,4 @@
-import { store, retrieve } from "./module-cache";
+import { store, retrieve } from "./cache";
 
 function download( module ) {
     

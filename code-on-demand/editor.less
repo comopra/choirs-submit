@@ -1,0 +1,43 @@
+.comopra-choirs-submit {
+    margin: 10px;
+    width: 600px;
+    box-shadow: 0 0 10px 0 #CCC;
+    border-radius: 4px;
+    padding: 16px;
+    font-family: "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    a,
+    input,
+    label {
+        font-size: 16px;
+    }
+    input[type=submit],
+    button {
+        border: solid 1px silver;
+        background-color: white;
+        border-radius: 4px;
+        cursor: pointer;
+        align-self: flex-end;
+        &:hover {
+            background-color: #EEE;
+        }
+    }
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+    form p {
+        display: flex;
+        padding: 8px 0;
+        align-items: center;
+    }
+    form input {
+        flex: 2;
+        padding: 8px;
+    }
+    form input[type=text] {
+        min-width: 300px;
+    }
+    form label {
+        flex: 1;
+    }
+}

@@ -1,12 +1,23 @@
 <!DOCTYPE html>
 <html>
     <head>
+        
+        <script>
+            document.addEventListener( "widget-loaded", function( evt ) {
+                
+                var opts = { detail: { site: document.body.querySelector( "#container" )  } };
+                document.dispatchEvent( new CustomEvent( "load-" + evt.detail, opts ) );
+
+            } );
+        </script>
+        <link rel="stylesheet" href="/dist/comopra-choirs-submit.css">
         <script src="/dist/comopra-choirs-submit.js"></script>
+        
     </head>
     <body>
         
-        1234:
-        <div id="1234"></div>
+        The container:
+        <div id="container"></div>
     
     </body>
 </html>

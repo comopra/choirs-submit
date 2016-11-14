@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>A test</title>
+    </head>
+
+    <body>
+        <form method="POST" action="https://httpbin.org/post">
+
+
+ <input name="_:b0 http://www.w3.org/1999/02/22-rdf-syntax-ns#type" type="hidden" value="http://schema.org/Organization" />
+<input name="_:b0 http://schema.org/location" type="hidden" value="_:b1" />
+<input name="_:b0 http://schema.org/location" type="hidden" value="_:b4" />
+<p><label for="_:b0:http://schema.org/name">name</label>
+<input id="_:b0:http://schema.org/name" name="_:b0 http://schema.org/name" type="text" value="The Big Bang Choir" />
+</p>
+<input name="_:b1 http://www.w3.org/1999/02/22-rdf-syntax-ns#type" type="hidden" value="http://schema.org/Place" />
+<input name="_:b1 http://schema.org/address" type="hidden" value="_:b2" />
+<input name="_:b1 http://schema.org/geo" type="hidden" value="_:b3" />
+<input name="_:b2 http://www.w3.org/1999/02/22-rdf-syntax-ns#type" type="hidden" value="http://schema.org/PostalAddress" />
+<p><label for="_:b2:http://schema.org/addressCountry">addressCountry</label>
+<input id="_:b2:http://schema.org/addressCountry" name="_:b2 http://schema.org/addressCountry" type="text" value="United Kingdom" />
+</p>
+<p><label for="_:b2:http://schema.org/addressLocality">addressLocality</label>
+<input id="_:b2:http://schema.org/addressLocality" name="_:b2 http://schema.org/addressLocality" type="text" value="Donaghadee" />
+</p>
+<p><label for="_:b2:http://schema.org/addressRegion">addressRegion</label>
+<input id="_:b2:http://schema.org/addressRegion" name="_:b2 http://schema.org/addressRegion" type="text" value="County Down" />
+</p>
+<p><label for="_:b2:http://schema.org/postalCode">postalCode</label>
+<input id="_:b2:http://schema.org/postalCode" name="_:b2 http://schema.org/postalCode" type="text" value="BT21 0AE" />
+</p>
+<input name="_:b3 http://www.w3.org/1999/02/22-rdf-syntax-ns#type" type="hidden" value="http://schema.org/GeoCoordinates" />
+<p><label for="_:b3:http://schema.org/latitude">latitude</label>
+<input id="_:b3:http://schema.org/latitude" name="_:b3 http://schema.org/latitude" type="text" value="5.4646155E1" />
+</p>
+<p><label for="_:b3:http://schema.org/longitude">longitude</label>
+<input id="_:b3:http://schema.org/longitude" name="_:b3 http://schema.org/longitude" type="text" value="-5.541578E0" />
+</p>
+<input name="_:b4 http://www.w3.org/1999/02/22-rdf-syntax-ns#type" type="hidden" value="http://schema.org/Place" />
+
+
+
+            <input type="submit" value="submit" />
+
+        </form>
+    </body>
+
+</html>

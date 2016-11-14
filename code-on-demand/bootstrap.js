@@ -1,4 +1,5 @@
 import Editor from "./Editor.jsx";
+import React from "react";
 import ReactDOM from "react-dom";
 
 function appendContainer() {
@@ -11,9 +12,10 @@ function appendContainer() {
 
 function loadComponent( e ) {
     
-    const site = e.detail.site || appendContainer();
+    const site = ( e.detail && e.detail.site ) || appendContainer();
     ReactDOM.render( <Editor />, site );
     
 }
 
 document.addEventListener( "load-comopra-choirs-submit", loadComponent );
+document.dispatchEvent( new CustomEvent( "widget-loaded", { detail: "comopra-choirs-submit" } ) );

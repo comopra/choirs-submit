@@ -1,4 +1,4 @@
-import load from "./module-loader";
+import load from "./modules/loader";
 
 load( [ {
     

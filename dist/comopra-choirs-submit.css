@@ -1,0 +1,44 @@
+.comopra-choirs-submit {
+  margin: 10px;
+  width: 600px;
+  box-shadow: 0 0 10px 0 #CCC;
+  border-radius: 4px;
+  padding: 16px;
+  font-family: "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+}
+.comopra-choirs-submit a,
+.comopra-choirs-submit input,
+.comopra-choirs-submit label {
+  font-size: 16px;
+}
+.comopra-choirs-submit input[type=submit],
+.comopra-choirs-submit button {
+  border: solid 1px silver;
+  background-color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  align-self: flex-end;
+}
+.comopra-choirs-submit input[type=submit]:hover,
+.comopra-choirs-submit button:hover {
+  background-color: #EEE;
+}
+.comopra-choirs-submit form {
+  display: flex;
+  flex-direction: column;
+}
+.comopra-choirs-submit form p {
+  display: flex;
+  padding: 8px 0;
+  align-items: center;
+}
+.comopra-choirs-submit form input {
+  flex: 2;
+  padding: 8px;
+}
+.comopra-choirs-submit form input[type=text] {
+  min-width: 300px;
+}
+.comopra-choirs-submit form label {
+  flex: 1;
+}
