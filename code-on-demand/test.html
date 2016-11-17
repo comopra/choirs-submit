@@ -3,13 +3,15 @@
     <head>
         
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
         <script>
             document.addEventListener( "widget-loaded", function( evt ) {
                 
                 var site = document.body.querySelector( "#container" );
                 var opts = { detail: { site: site  } };
                 document.dispatchEvent( new CustomEvent( "load-" + evt.detail, opts ) );
-                setTimeout( function() { site.classList.remove( "loading" ); }, 50 );
+                site.classList.remove( "loading" );
 
             } );
         </script>
@@ -41,21 +43,19 @@
             #container::before {
                 
                 opacity: 0;
-                transition: all 1s;
+                transition: all 0.3s;
                 content: " L O A D I N G ";
-                position: absolute;
                 font-size: 200%;
                 color: #EEE;
-                transform: translateY(-100px);
-                top: 10px;
-                left: 10px;
+                position: absolute;
+                transform: scale(1,0.7);
 
             }
             #container.loading::before {
-                
+
+                transform: none;                
                 opacity: 1;
-                transform: none;
-            
+
             }
             
         </style>
