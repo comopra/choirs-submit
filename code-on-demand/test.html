@@ -2,6 +2,7 @@
 <html>
     <head>
         
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <script>
             document.addEventListener( "widget-loaded", function( evt ) {
                 
@@ -12,9 +13,22 @@
 
             } );
         </script>
-        <style >
-            body { font-family: sans-serif; }
+        <style>
+            body, html { 
+                
+                height: 100%;
+                font-family: sans-serif;
+                margin: 0;
+                box-sizing: border-box;
+                
+            }
             
+            body {
+                
+                padding: 10px;
+                
+            }
+
             #container {
                 
                 position: relative;
@@ -22,8 +36,6 @@
                 min-height: 100px;
                 border: none;
                 border-top: solid 1px #EEE;
-                overflow: hidden;
-                
                 
             }
             #container::before {
