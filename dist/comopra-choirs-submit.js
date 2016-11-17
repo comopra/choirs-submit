@@ -117,7 +117,6 @@
 
 	}]).then(function (modules) {
 
-	    console.log(modules);
 	    __webpack_require__.e/* require */(1, function() {[__webpack_require__(3)];});
 	}, function (e) {
 

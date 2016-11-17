@@ -5,19 +5,56 @@
         <script>
             document.addEventListener( "widget-loaded", function( evt ) {
                 
-                var opts = { detail: { site: document.body.querySelector( "#container" )  } };
+                var site = document.body.querySelector( "#container" );
+                var opts = { detail: { site: site  } };
                 document.dispatchEvent( new CustomEvent( "load-" + evt.detail, opts ) );
+                setTimeout( function() { site.classList.remove( "loading" ); }, 50 );
 
             } );
         </script>
+        <style >
+            body { font-family: sans-serif; }
+            
+            #container {
+                
+                position: relative;
+                margin: 10px;
+                min-height: 100px;
+                border: none;
+                border-top: solid 1px #EEE;
+                overflow: hidden;
+                
+                
+            }
+            #container::before {
+                
+                opacity: 0;
+                transition: all 1s;
+                content: " L O A D I N G ";
+                position: absolute;
+                font-size: 200%;
+                color: #EEE;
+                transform: translateY(-100px);
+                top: 10px;
+                left: 10px;
+
+            }
+            #container.loading::before {
+                
+                opacity: 1;
+                transform: none;
+            
+            }
+            
+        </style>
         <link rel="stylesheet" href="/dist/comopra-choirs-submit.css">
         <script src="/dist/comopra-choirs-submit.js"></script>
         
     </head>
     <body>
         
-        The container:
-        <div id="container"></div>
+        <p>The container:</p>
+        <section id="container" class="loading">&nbsp;</section>
     
     </body>
 </html>

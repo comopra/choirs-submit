@@ -57,7 +57,7 @@ webpackJsonp([1],[
 
 	var _formSerialize2 = _interopRequireDefault(_formSerialize);
 
-	__webpack_require__(7);
+	__webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./editor.less\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -399,12 +399,7 @@ webpackJsonp([1],[
 	module.exports = serialize;
 
 /***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	// removed by extract-text-webpack-plugin
-
-/***/ },
+/* 7 */,
 /* 8 */
 /***/ function(module, exports) {
 

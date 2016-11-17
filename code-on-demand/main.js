@@ -16,7 +16,6 @@ load( [ {
 
     modules => { 
         
-        console.log( modules );
         require( [ "./bootstrap" ] );
         
     },
