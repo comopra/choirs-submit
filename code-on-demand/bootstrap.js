@@ -1,6 +1,8 @@
-import Editor from "./Editor.jsx";
+import EditorContainer from "./EditorContainer.jsx";
 import React from "react";
-import ReactDOM from "react-dom";
+import { render } from "react-dom";
+import { Provider } from "react-redux";
+import editorStore from "./editor-store";
 
 function appendContainer() {
     
@@ -10,12 +12,13 @@ function appendContainer() {
     
 }
 
-function loadComponent( e ) {
+function loadWidget( e ) {
     
     const site = ( e.detail && e.detail.site ) || appendContainer();
-    ReactDOM.render( <Editor />, site );
+    const widget = <Provider store={editorStore}><EditorContainer /></Provider>;
+    render( widget, site );
     
 }
 
-document.addEventListener( "load-comopra-choirs-submit", loadComponent );
+document.addEventListener( "load-comopra-choirs-submit", loadWidget );
 document.dispatchEvent( new CustomEvent( "widget-loaded", { detail: "comopra-choirs-submit" } ) );

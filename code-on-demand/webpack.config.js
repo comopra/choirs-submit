@@ -1,6 +1,5 @@
 const path = require( "path" );
-const webpack = require( "webpack" );
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
+var ExtractTextPlugin = require( "extract-text-webpack-plugin" );
 
 module.exports = {
 
@@ -29,6 +28,7 @@ module.exports = {
 
             test: /\.less$/,
             loader: ExtractTextPlugin.extract( "css!less" )
+
         } ]
 
     },
@@ -36,16 +36,18 @@ module.exports = {
 
         alias: {
 
-            "react": __dirname + "/loaders/react",
-            "react-dom": __dirname + "/loaders/react-dom"
+            "react": path.resolve( "./loaders/react" ),
+            "react-dom": path.resolve( "./loaders/react-dom" ),
+            "redux": path.resolve( "./loaders/redux" ),
+            "react-redux": path.resolve( "./loaders/react-redux" )
 
         }
 
     },
     plugins: [
-        
-        new ExtractTextPlugin( "comopra-choirs-submit.css", { allChunks: true } ) 
-    
+
+        new ExtractTextPlugin( "comopra-choirs-submit.css", { allChunks: true } )
+
     ]
 
 };

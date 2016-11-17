@@ -7,17 +7,21 @@ webpackJsonp([1],[
 
 	"use strict";
 
-	var _Editor = __webpack_require__(4);
+	var _EditorContainer = __webpack_require__(4);
 
-	var _Editor2 = _interopRequireDefault(_Editor);
+	var _EditorContainer2 = _interopRequireDefault(_EditorContainer);
 
-	var _react = __webpack_require__(5);
+	var _react = __webpack_require__(7);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactDom = __webpack_require__(8);
+	var _reactDom = __webpack_require__(12);
 
-	var _reactDom2 = _interopRequireDefault(_reactDom);
+	var _reactRedux = __webpack_require__(5);
+
+	var _editorStore = __webpack_require__(13);
+
+	var _editorStore2 = _interopRequireDefault(_editorStore);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -28,13 +32,18 @@ webpackJsonp([1],[
 	    return div;
 	}
 
-	function loadComponent(e) {
+	function loadWidget(e) {
 
 	    var site = e.detail && e.detail.site || appendContainer();
-	    _reactDom2.default.render(_react2.default.createElement(_Editor2.default, null), site);
+	    var widget = _react2.default.createElement(
+	        _reactRedux.Provider,
+	        { store: _editorStore2.default },
+	        _react2.default.createElement(_EditorContainer2.default, null)
+	    );
+	    (0, _reactDom.render)(widget, site);
 	}
 
-	document.addEventListener("load-comopra-choirs-submit", loadComponent);
+	document.addEventListener("load-comopra-choirs-submit", loadWidget);
 	document.dispatchEvent(new CustomEvent("widget-loaded", { detail: "comopra-choirs-submit" }));
 
 /***/ },
@@ -47,17 +56,77 @@ webpackJsonp([1],[
 	    value: true
 	});
 
+	var _reactRedux = __webpack_require__(5);
+
+	var _Editor = __webpack_require__(6);
+
+	var _Editor2 = _interopRequireDefault(_Editor);
+
+	var _actionCreators = __webpack_require__(10);
+
+	var _actionCreators2 = _interopRequireDefault(_actionCreators);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var mapStateToProps = function mapStateToProps(state) {
+	    return {
+
+	        defaults: state.session
+
+	    };
+	};
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+	    return {
+
+	        handleChange: function handleChange(e) {
+	            return dispatch(_actionCreators2.default.fieldChange(e.target.name, e.target.value));
+	        }
+
+	    };
+	};
+
+	var EditorContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_Editor2.default);
+	exports.default = EditorContainer;
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var key = "react-redux";
+	var version = "4.4.6";
+
+	var x = window.CoP.retrieve({ key: key, version: version }).instance;
+	var Provider = x.Provider,
+	    connect = x.connect;
+	exports.Provider = Provider;
+	exports.connect = connect;
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _react = __webpack_require__(5);
+	var _react = __webpack_require__(7);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _formSerialize = __webpack_require__(6);
+	var _formSerialize = __webpack_require__(8);
 
 	var _formSerialize2 = _interopRequireDefault(_formSerialize);
 
-	__webpack_require__(7);
+	__webpack_require__(9);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -67,8 +136,8 @@ webpackJsonp([1],[
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var Editor = function (_React$Component) {
-	    _inherits(Editor, _React$Component);
+	var Editor = function (_Component) {
+	    _inherits(Editor, _Component);
 
 	    function Editor() {
 	        _classCallCheck(this, Editor);
@@ -87,6 +156,10 @@ webpackJsonp([1],[
 	        key: "render",
 	        value: function render() {
 	            var _this2 = this;
+
+	            var _props = this.props,
+	                handleChange = _props.handleChange,
+	                defaults = _props.defaults;
 
 	            return _react2.default.createElement(
 	                "article",
@@ -109,7 +182,9 @@ webpackJsonp([1],[
 	                            null,
 	                            "Name"
 	                        ),
-	                        _react2.default.createElement("input", { type: "text", name: "name" })
+	                        _react2.default.createElement("input", { type: "text", name: "name", defaultValue: defaults.name, onChange: function onChange(e) {
+	                                return handleChange(e);
+	                            } })
 	                    ),
 	                    _react2.default.createElement("input", { type: "submit", value: "Submit" })
 	                )
@@ -118,12 +193,12 @@ webpackJsonp([1],[
 	    }]);
 
 	    return Editor;
-	}(_react2.default.Component);
+	}(_react.Component);
 
 	exports.default = Editor;
 
 /***/ },
-/* 5 */
+/* 7 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -136,11 +211,13 @@ webpackJsonp([1],[
 
 	var React = window.CoP.retrieve({ key: key, version: version }).instance;
 	exports.default = React;
-	var Component = React.Component;
+	var Component = React.Component,
+	    PropTypes = React.PropTypes;
 	exports.Component = Component;
+	exports.PropTypes = PropTypes;
 
 /***/ },
-/* 6 */
+/* 8 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -399,13 +476,53 @@ webpackJsonp([1],[
 	module.exports = serialize;
 
 /***/ },
-/* 7 */
+/* 9 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
-/* 8 */
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _actionTypes = __webpack_require__(11);
+
+	var _actionTypes2 = _interopRequireDefault(_actionTypes);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = {
+
+	    fieldChange: function fieldChange(prop, value) {
+	        return { type: _actionTypes2.default.FIELD_CHANGE, prop: prop, value: value };
+	    }
+
+	};
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var FIELD_CHANGE = "FIELD_CHANGE";
+	exports.default = {
+
+	    FIELD_CHANGE: FIELD_CHANGE
+
+	};
+
+/***/ },
+/* 12 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -417,6 +534,131 @@ webpackJsonp([1],[
 	var version = "15.3.2";
 	var ReactDOM = window.CoP.retrieve({ key: key, version: version }).instance;
 	exports.default = ReactDOM;
+	var render = ReactDOM.render;
+	exports.render = render;
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _redux = __webpack_require__(14);
+
+	var _editor = __webpack_require__(15);
+
+	var _editor2 = _interopRequireDefault(_editor);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var devtools = window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__();
+
+	exports.default = (0, _redux.createStore)(_editor2.default, devtools);
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var key = "redux";
+	var version = "3.6.0";
+
+	var redux = window.CoP.retrieve({ key: key, version: version }).instance;
+	exports.default = redux;
+	var createStore = redux.createStore,
+	    applyMiddleware = redux.applyMiddleware,
+	    combineReducers = redux.combineReducers;
+	exports.createStore = createStore;
+	exports.applyMiddleware = applyMiddleware;
+	exports.combineReducers = combineReducers;
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _redux = __webpack_require__(14);
+
+	var _session = __webpack_require__(17);
+
+	var _session2 = _interopRequireDefault(_session);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = (0, _redux.combineReducers)({ session: _session2.default });
+
+/***/ },
+/* 16 */,
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _actionTypes = __webpack_require__(11);
+
+	var _actionTypes2 = _interopRequireDefault(_actionTypes);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+	var store = window.sessionStorage;
+
+	var initialState = function fetchState() {
+
+	    if (!store) {
+	        return {};
+	    }
+	    try {
+
+	        console.log(store.getItem("editor-state"));
+	        return JSON.parse(store.getItem("editor-state")) || {};
+	    } catch (e) {
+
+	        return {};
+	    }
+	}();
+
+	exports.default = function () {
+	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
+	    var action = arguments[1];
+
+
+	    if (!store) {
+	        return state;
+	    }
+
+	    switch (action.type) {
+
+	        case _actionTypes2.default.FIELD_CHANGE:
+	            var newState = _extends({}, state, _defineProperty({}, action.prop, action.value));
+	            store.setItem("editor-state", JSON.stringify(newState));
+	            return newState;
+
+	        default:
+	            return state;
+
+	    }
+	};
 
 /***/ }
 ]);
